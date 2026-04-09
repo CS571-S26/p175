@@ -1,24 +1,57 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import BrowseMovies from "./pages/BrowseMovies";
+import MyWatchlist from "./pages/MyWatchlist";
+import WatchedMovies from "./pages/WatchedMovies";
+import NavBar from "./components/NavBar";
 
 function App() {
+  // load from sessionStorage if exists
+  const [watchlist, setWatchlist] = useState(
+    JSON.parse(sessionStorage.getItem("watchlist")) || []
+  );
+  const [watched, setWatched] = useState(
+    JSON.parse(sessionStorage.getItem("watched")) || []
+  );
+  const [search, setSearch] = useState("");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <NavBar
+          watchlistCount={watchlist.length}
+          watchedCount={watched.length}
+        />
+        <Routes>
+          {/* browse page */}
+          <Route
+            path="/"
+            element={
+              <BrowseMovies
+                watchlist={watchlist}
+                setWatchlist={setWatchlist}
+                search={search}
+                setSearch={setSearch}
+              />
+            }
+          />
+          {/* watchlist page */}
+          <Route
+            path="/watchlist"
+            element={
+              <MyWatchlist
+                watchlist={watchlist}
+                setWatchlist={setWatchlist}
+                watched={watched}
+                setWatched={setWatched}
+              />
+            }
+          />
+          {/* watched page */}
+          <Route path="/watched" element={<WatchedMovies watched={watched} />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
