@@ -1,6 +1,8 @@
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import data from "../data/movies.json";
 import MovieCard from "../components/MovieCard";
+import SearchBar from "../components/SearchBar";
+import PageHeader from "../components/PageHeader";
 
 function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
   const movies = data.movies;
@@ -21,17 +23,13 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
   );
 
   return (
-    <Container className="mt-4">
-      <h1 className="mb-3">Browse Movies</h1>
+    <Container className="pt-5">
+      <PageHeader
+        title="Browse Movies"
+        subtitle="Search and save movies to your personal watchlist"
+      />
 
-      <Form className="mb-4">
-        <Form.Control
-          type="text"
-          placeholder="Search movies by title..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </Form>
+      <SearchBar search={search} setSearch={setSearch} />
 
       <Row>
         {filtered.slice(0, 24).map((movie, idx) => {

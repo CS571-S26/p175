@@ -1,5 +1,7 @@
 body {
   margin: 0;
+  background-color: #121212;
+  color: white;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -10,4 +12,21 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+h1 {
+  font-weight: 600;
+}
+.container {
+  background-color: transparent !important;
+}
+body, html, #root {
+  background-color: #121212 !important;
+  min-height: 100%;
+}
+main, div {
+  background-color: transparent;
+}
+.form-control::placeholder {
+  color: #888 !important;
 }
