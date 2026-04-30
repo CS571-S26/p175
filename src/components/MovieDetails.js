@@ -35,7 +35,8 @@ function MovieDetails({ watchlist, setWatchlist, watched }) {
   }
 
   const handleAdd = () => {
-    if (isInWatchlist) {
+    // don't add if already watched or already in watchlist
+    if (isInWatchlist || hasWatched) {
       return;
     }
 
@@ -106,16 +107,20 @@ function MovieDetails({ watchlist, setWatchlist, watched }) {
           >
             <Button
               onClick={handleAdd}
-              disabled={isInWatchlist}
+              disabled={isInWatchlist || hasWatched}
               style={{
                 backgroundColor: "#f5c518",
                 color: "black",
                 border: "none",
                 fontWeight: "600",
-                opacity: isInWatchlist ? 0.6 : 1
+                opacity: isInWatchlist || hasWatched ? 0.6 : 1
               }}
             >
-              {isInWatchlist ? "Already in Watchlist" : "Add to Watchlist"}
+              {hasWatched
+                ? "Watched"
+                : isInWatchlist
+                ? "Already in Watchlist"
+                : "Add to Watchlist"}
             </Button>
 
             <Button

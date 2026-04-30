@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
+
 import BrowseMovies from "./pages/BrowseMovies";
 import MyWatchlist from "./pages/MyWatchlist";
 import WatchedMovies from "./pages/WatchedMovies";
-import MovieDetails from "./components/MovieDetails";
+import MovieDetails from "./components/MovieDetails"; // <-- fix path
 import NavBar from "./components/NavBar";
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
               <BrowseMovies
                 watchlist={watchlist}
                 setWatchlist={setWatchlist}
+                watched={watched}   // <-- FIX (this caused your crash)
                 search={search}
                 setSearch={setSearch}
               />

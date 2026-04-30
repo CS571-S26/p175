@@ -5,7 +5,7 @@ import MovieCard from "../components/MovieCard";
 import SearchBar from "../components/SearchBar";
 import PageHeader from "../components/PageHeader";
 
-function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
+function BrowseMovies({ watchlist, setWatchlist, watched, search, setSearch }) {
   const movies = data.movies;
   const [showToast, setShowToast] = useState(false);
   const [page, setPage] = useState(1);
@@ -14,7 +14,10 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
   const moviesPerPage = 24;
 
   const handleAdd = (movie) => {
-    if (watchlist.some((m) => m.Title === movie.Title)) {
+    if (
+      watchlist.some((m) => m.imdbID === movie.imdbID) ||
+      watched.some((m) => m.imdbID === movie.imdbID)
+    ) {
       return;
     }
 
@@ -23,7 +26,6 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
     //save in sessionstorage
     sessionStorage.setItem("watchlist", JSON.stringify(updatedWatchlist));
 
-    // little confirmation popup
     setShowToast(true);
   };
 
@@ -31,7 +33,6 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
     movie.Title.toLowerCase().includes(search.toLowerCase())
   );
 
-  // sort movies based on dropdown
   if (sortBy === "alphabetical") {
     filtered = [...filtered].sort((a, b) => a.Title.localeCompare(b.Title));
   } else if (sortBy === "newest") {
@@ -53,7 +54,7 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
-    setPage(1); // reset pages after sorting
+    setPage(1);
   };
 
   return (
@@ -67,7 +68,7 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
         search={search}
         setSearch={(value) => {
           setSearch(value);
-          setPage(1); // reset to page 1 after searching
+          setPage(1);
         }}
       />
 
@@ -95,15 +96,18 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
 
       <Row>
         {currentMovies.map((movie, idx) => {
-          const isAdded = watchlist.some((m) => m.Title === movie.Title);
+          const isAdded = watchlist.some((m) => m.imdbID === movie.imdbID);
+          const isWatched = watched.some((m) => m.imdbID === movie.imdbID);
 
           return (
             <Col key={idx} xs={12} sm={6} md={4} lg={3} className="mb-4">
               <MovieCard
                 movie={movie}
-                buttonText={isAdded ? "Added" : "Add to Watchlist"}
-                buttonVariant={isAdded ? "secondary" : "primary"}
-                disabled={isAdded}
+                buttonText={
+                  isWatched ? "Watched" : isAdded ? "Added" : "Add to Watchlist"
+                }
+                buttonVariant={isWatched || isAdded ? "secondary" : "primary"}
+                disabled={isWatched || isAdded}
                 onButtonClick={() => handleAdd(movie)}
               />
             </Col>
@@ -111,20 +115,11 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
         })}
       </Row>
 
-      {/* page buttons */}
       <div
         className="d-flex justify-content-center align-items-center my-4"
         style={{ gap: "8px" }}
       >
-        <Button
-          disabled={page === 1}
-          onClick={() => changePage(page - 1)}
-          style={{
-            backgroundColor: "#333",
-            border: "1px solid #555",
-            color: "white"
-          }}
-        >
+        <Button disabled={page === 1} onClick={() => changePage(page - 1)}>
           &lt;
         </Button>
 
@@ -149,15 +144,7 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
 
         {totalPages > 6 && <span style={{ color: "#aaa" }}>...</span>}
 
-        <Button
-          disabled={page === totalPages}
-          onClick={() => changePage(page + 1)}
-          style={{
-            backgroundColor: "#333",
-            border: "1px solid #555",
-            color: "white"
-          }}
-        >
+        <Button disabled={page === totalPages} onClick={() => changePage(page + 1)}>
           &gt;
         </Button>
       </div>
