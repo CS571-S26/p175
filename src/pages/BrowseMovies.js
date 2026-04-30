@@ -1,4 +1,5 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { useState } from "react";
+import { Container, Row, Col, Toast } from "react-bootstrap";
 import data from "../data/movies.json";
 import MovieCard from "../components/MovieCard";
 import SearchBar from "../components/SearchBar";
@@ -6,6 +7,7 @@ import PageHeader from "../components/PageHeader";
 
 function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
   const movies = data.movies;
+  const [showToast, setShowToast] = useState(false);
 
   const handleAdd = (movie) => {
     if (watchlist.some((m) => m.Title === movie.Title)) {
@@ -16,6 +18,9 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
     setWatchlist(updatedWatchlist);
     //save in sessionstorage
     sessionStorage.setItem("watchlist", JSON.stringify(updatedWatchlist));
+
+    // little confirmation popup
+    setShowToast(true);
   };
 
   const filtered = movies.filter((movie) =>
@@ -48,6 +53,24 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
           );
         })}
       </Row>
+
+      <Toast
+        onClose={() => setShowToast(false)}
+        show={showToast}
+        delay={2000}
+        autohide
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          backgroundColor: "#1e1e1e",
+          color: "white",
+          border: "1px solid #333",
+          zIndex: 9999
+        }}
+      >
+        <Toast.Body>Movie added to watchlist!</Toast.Body>
+      </Toast>
     </Container>
   );
 }

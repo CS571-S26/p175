@@ -1,5 +1,6 @@
 import { Card, Button } from "react-bootstrap";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function MovieCard({ movie, buttonText, buttonVariant, onButtonClick, disabled }) {
   const [posterPath, setPosterPath] = useState("");
@@ -24,6 +25,10 @@ function MovieCard({ movie, buttonText, buttonVariant, onButtonClick, disabled }
     getPoster();
   }, [movie.Title]);
 
+  const posterSrc = posterPath
+    ? `https://image.tmdb.org/t/p/w500${posterPath}`
+    : movie.Poster || "https://placehold.co/300x450?text=No+Poster";
+
   return (
     <Card
       style={{
@@ -40,11 +45,8 @@ function MovieCard({ movie, buttonText, buttonVariant, onButtonClick, disabled }
     >
       <Card.Img
         variant="top"
-        src={
-          posterPath
-            ? `https://image.tmdb.org/t/p/w500${posterPath}`
-            : "https://placehold.co/300x450?text=No+Poster"
-        }
+        src={posterSrc}
+        alt={`${movie.Title} poster`}
         style={{
           height: "420px",
           objectFit: "cover"
@@ -69,22 +71,38 @@ function MovieCard({ movie, buttonText, buttonVariant, onButtonClick, disabled }
         </Card.Text>
 
         <Button
-        onClick={onButtonClick}
-        disabled={disabled}
-        style={{
-          width: "100%",
-          borderRadius: "8px",
-          fontWeight: "600",
-          marginTop: "8px",
-          backgroundColor: "#f5c518",
-          border: "none",
-          color: "black",
-          opacity: disabled ? 0.6 : 1,
-        cursor: disabled ? "not-allowed" : "pointer"
-        }}
-      >
-        {buttonText}
-      </Button>
+          as={Link}
+          to={`/movie/${movie.imdbID}`}
+          style={{
+            width: "100%",
+            borderRadius: "8px",
+            fontWeight: "600",
+            marginTop: "8px",
+            backgroundColor: "#333",
+            border: "1px solid #555",
+            color: "white"
+          }}
+        >
+          View Details
+        </Button>
+
+        <Button
+          onClick={onButtonClick}
+          disabled={disabled}
+          style={{
+            width: "100%",
+            borderRadius: "8px",
+            fontWeight: "600",
+            marginTop: "8px",
+            backgroundColor: "#f5c518",
+            border: "none",
+            color: "black",
+            opacity: disabled ? 0.6 : 1,
+            cursor: disabled ? "not-allowed" : "pointer"
+          }}
+        >
+          {buttonText}
+        </Button>
       </Card.Body>
     </Card>
   );

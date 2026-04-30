@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import BrowseMovies from "./pages/BrowseMovies";
 import MyWatchlist from "./pages/MyWatchlist";
 import WatchedMovies from "./pages/WatchedMovies";
+import MovieDetails from "./components/MovieDetails";
 import NavBar from "./components/NavBar";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           watchlistCount={watchlist.length}
           watchedCount={watched.length}
         />
+
         <Routes>
           {/* browse page */}
           <Route
@@ -35,6 +37,7 @@ function App() {
               />
             }
           />
+
           {/* watchlist page */}
           <Route
             path="/watchlist"
@@ -47,8 +50,12 @@ function App() {
               />
             }
           />
+
           {/* watched page */}
           <Route path="/watched" element={<WatchedMovies watched={watched} />} />
+
+          {/* movie details page */}
+          <Route path="/movie/:imdbID" element={<MovieDetails />} />
         </Routes>
       </div>
     </Router>

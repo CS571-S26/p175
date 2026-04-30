@@ -3,7 +3,12 @@ import { Form } from "react-bootstrap";
 function SearchBar({ search, setSearch }) {
   return (
     <Form className="mb-4">
+      <Form.Label htmlFor="movie-search" visuallyHidden>
+        Search movies by title
+      </Form.Label>
+
       <Form.Control
+        id="movie-search"
         type="text"
         placeholder="Search movies by title..."
         value={search}

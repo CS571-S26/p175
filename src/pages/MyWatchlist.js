@@ -1,8 +1,10 @@
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { useState } from "react";
+import { Container, Row, Col, Button, Toast } from "react-bootstrap";
 import MovieCard from "../components/MovieCard";
 import PageHeader from "../components/PageHeader";
 
 function MyWatchlist({ watchlist, setWatchlist, watched, setWatched }) {
+  const [showToast, setShowToast] = useState(false);
 
   const handleRemove = (movieToRemove) => {
     //removing movie from watchlist
@@ -21,11 +23,13 @@ function MyWatchlist({ watchlist, setWatchlist, watched, setWatched }) {
 
     sessionStorage.setItem("watchlist", JSON.stringify(updatedWatchlist));
     sessionStorage.setItem("watched", JSON.stringify(updatedWatched));
+
+    // confirmation popup
+    setShowToast(true);
   };
 
   return (
     <Container className="pt-5">
-
       {/* page header component */}
       <PageHeader
         title="My Watchlist"
@@ -63,6 +67,24 @@ function MyWatchlist({ watchlist, setWatchlist, watched, setWatched }) {
             </Col>
           ))}
       </Row>
+
+      <Toast
+        onClose={() => setShowToast(false)}
+        show={showToast}
+        delay={2000}
+        autohide
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          backgroundColor: "#1e1e1e",
+          color: "white",
+          border: "1px solid #333",
+          zIndex: 9999
+        }}
+      >
+        <Toast.Body>Movie marked as watched!</Toast.Body>
+      </Toast>
     </Container>
   );
 }
