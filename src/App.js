@@ -11,9 +11,11 @@ function App() {
   const [watchlist, setWatchlist] = useState(
     JSON.parse(sessionStorage.getItem("watchlist")) || []
   );
+
   const [watched, setWatched] = useState(
     JSON.parse(sessionStorage.getItem("watched")) || []
   );
+
   const [search, setSearch] = useState("");
 
   return (
@@ -52,10 +54,22 @@ function App() {
           />
 
           {/* watched page */}
-          <Route path="/watched" element={<WatchedMovies watched={watched} />} />
+          <Route
+            path="/watched"
+            element={<WatchedMovies watched={watched} />}
+          />
 
           {/* movie details page */}
-          <Route path="/movie/:imdbID" element={<MovieDetails />} />
+          <Route
+            path="/movie/:imdbID"
+            element={
+              <MovieDetails
+                watchlist={watchlist}
+                setWatchlist={setWatchlist}
+                watched={watched}
+              />
+            }
+          />
         </Routes>
       </div>
     </Router>

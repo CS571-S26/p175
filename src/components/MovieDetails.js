@@ -7,14 +7,11 @@ import RatingBadge from "../components/RatingBadge";
 import ReviewForm from "../components/ReviewForm";
 import ReviewList from "../components/ReviewList";
 
-function MovieDetails() {
+function MovieDetails({ watchlist, setWatchlist, watched }) {
   const { imdbID } = useParams();
   const movie = data.movies.find((m) => m.imdbID === imdbID);
 
-  const watched = JSON.parse(sessionStorage.getItem("watched")) || [];
   const hasWatched = watched.some((m) => m.imdbID === imdbID);
-
-  const watchlist = JSON.parse(sessionStorage.getItem("watchlist")) || [];
   const isInWatchlist = watchlist.some((m) => m.imdbID === imdbID);
 
   const [showToast, setShowToast] = useState(false);
@@ -43,6 +40,8 @@ function MovieDetails() {
     }
 
     const updatedWatchlist = [...watchlist, movie];
+
+    setWatchlist(updatedWatchlist);
     sessionStorage.setItem("watchlist", JSON.stringify(updatedWatchlist));
 
     // little confirmation popup
@@ -97,7 +96,14 @@ function MovieDetails() {
             {movie.Awards}
           </p>
 
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "10px" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+              marginTop: "10px"
+            }}
+          >
             <Button
               onClick={handleAdd}
               disabled={isInWatchlist}
