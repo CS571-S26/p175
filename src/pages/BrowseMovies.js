@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, Row, Col, Toast } from "react-bootstrap";
+import { Container, Row, Col, Toast, Button, Form } from "react-bootstrap";
 import data from "../data/movies.json";
 import MovieCard from "../components/MovieCard";
 import SearchBar from "../components/SearchBar";
@@ -8,6 +8,10 @@ import PageHeader from "../components/PageHeader";
 function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
   const movies = data.movies;
   const [showToast, setShowToast] = useState(false);
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState("default");
+
+  const moviesPerPage = 24;
 
   const handleAdd = (movie) => {
     if (watchlist.some((m) => m.Title === movie.Title)) {
@@ -23,21 +27,74 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
     setShowToast(true);
   };
 
-  const filtered = movies.filter((movie) =>
+  let filtered = movies.filter((movie) =>
     movie.Title.toLowerCase().includes(search.toLowerCase())
   );
+
+  // sort movies based on dropdown
+  if (sortBy === "alphabetical") {
+    filtered = [...filtered].sort((a, b) => a.Title.localeCompare(b.Title));
+  } else if (sortBy === "newest") {
+    filtered = [...filtered].sort((a, b) => Number(b.Year) - Number(a.Year));
+  } else if (sortBy === "oldest") {
+    filtered = [...filtered].sort((a, b) => Number(a.Year) - Number(b.Year));
+  } else if (sortBy === "rating") {
+    filtered = [...filtered].sort((a, b) => Number(b.imdbRating) - Number(a.imdbRating));
+  }
+
+  const totalPages = Math.ceil(filtered.length / moviesPerPage);
+  const startIndex = (page - 1) * moviesPerPage;
+  const currentMovies = filtered.slice(startIndex, startIndex + moviesPerPage);
+
+  const changePage = (newPage) => {
+    setPage(newPage);
+    window.scrollTo(0, 0);
+  };
+
+  const handleSortChange = (e) => {
+    setSortBy(e.target.value);
+    setPage(1); // reset pages after sorting
+  };
 
   return (
     <Container className="pt-5">
       <PageHeader
         title="Browse Movies"
-        subtitle="Search and save movies to your personal watchlist"
+        subtitle="Search, sort, and save movies to your personal watchlist"
       />
 
-      <SearchBar search={search} setSearch={setSearch} />
+      <SearchBar
+        search={search}
+        setSearch={(value) => {
+          setSearch(value);
+          setPage(1); // reset to page 1 after searching
+        }}
+      />
+
+      <Form.Group className="mb-4" controlId="sort-movies">
+        <Form.Label style={{ color: "white" }}>Sort movies by</Form.Label>
+        <Form.Select
+          value={sortBy}
+          onChange={handleSortChange}
+          style={{
+            backgroundColor: "#1e1e1e",
+            color: "white",
+            border: "1px solid #333",
+            borderRadius: "10px",
+            padding: "12px",
+            maxWidth: "300px"
+          }}
+        >
+          <option value="default">Default order</option>
+          <option value="alphabetical">Alphabetical</option>
+          <option value="newest">Newest released</option>
+          <option value="oldest">Oldest released</option>
+          <option value="rating">Highest IMDb rating</option>
+        </Form.Select>
+      </Form.Group>
 
       <Row>
-        {filtered.slice(0, 24).map((movie, idx) => {
+        {currentMovies.map((movie, idx) => {
           const isAdded = watchlist.some((m) => m.Title === movie.Title);
 
           return (
@@ -53,6 +110,57 @@ function BrowseMovies({ watchlist, setWatchlist, search, setSearch }) {
           );
         })}
       </Row>
+
+      {/* page buttons */}
+      <div
+        className="d-flex justify-content-center align-items-center my-4"
+        style={{ gap: "8px" }}
+      >
+        <Button
+          disabled={page === 1}
+          onClick={() => changePage(page - 1)}
+          style={{
+            backgroundColor: "#333",
+            border: "1px solid #555",
+            color: "white"
+          }}
+        >
+          &lt;
+        </Button>
+
+        {[...Array(totalPages)].slice(0, 6).map((_, idx) => {
+          const pageNum = idx + 1;
+
+          return (
+            <Button
+              key={pageNum}
+              onClick={() => changePage(pageNum)}
+              style={{
+                backgroundColor: page === pageNum ? "#f5c518" : "#333",
+                color: page === pageNum ? "black" : "white",
+                border: "1px solid #555",
+                fontWeight: "600"
+              }}
+            >
+              {pageNum}
+            </Button>
+          );
+        })}
+
+        {totalPages > 6 && <span style={{ color: "#aaa" }}>...</span>}
+
+        <Button
+          disabled={page === totalPages}
+          onClick={() => changePage(page + 1)}
+          style={{
+            backgroundColor: "#333",
+            border: "1px solid #555",
+            color: "white"
+          }}
+        >
+          &gt;
+        </Button>
+      </div>
 
       <Toast
         onClose={() => setShowToast(false)}
